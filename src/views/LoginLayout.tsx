@@ -2,7 +2,7 @@ import * as React from 'react';
 import Login from '../components/Login';
 import { Row, Col } from 'antd';
 import styles from '../static/styles/loginLayout.module.css'
-import fb from '../config/firebase'
+import fb from '../firebase'
 import { Store } from 'antd/lib/form/interface';
 
 const { firebase, VERIFIED_ID } = fb;

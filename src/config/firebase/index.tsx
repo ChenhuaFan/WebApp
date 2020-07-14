@@ -13,5 +13,10 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export default firebase;
+const t = {
+  firebase,
+  VERIFIED_ID: 'get-captcha-button'
+}
+
+export default t;
 

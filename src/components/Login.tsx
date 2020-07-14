@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Typography, Space, Divider, Form, Input, Button, Checkbox, Tabs, Select } from 'antd';
-import { MailOutlined, LockOutlined, GoogleOutlined, PhoneOutlined, NumberOutlined } from '@ant-design/icons';
+import { MailOutlined, LockOutlined, GoogleOutlined, PhoneOutlined, NumberOutlined, WechatOutlined } from '@ant-design/icons';
 import { Store } from 'antd/lib/form/interface';
 
 const { Title, Text, Link } = Typography;
@@ -10,10 +10,10 @@ const { Option } = Select;
 // constant variable
 const
   PHONE_REGS: any = {
-    "1": /^(1\s?)?(\(\d{3}\)|\d{3})\s?-?\d{3}-?\s?\d{4}$/,
+    "1": /^(\(\d{3}\)|\d{3})\s?-?\d{3}-?\s?\d{4}$/,
     "86": /^1[3456789]\d{9}$/
   },
-  TIME = 120;
+  TIME = 60;
 
 // interface
 interface IProps {
@@ -21,6 +21,7 @@ interface IProps {
   onGetCaptcha: (phone: string) => void,
   onLoginViaEmail: (values: Store) => void,
   onLoginViaPhone: (values: Store) => void,
+  onLoginViaGoogle: () => void
 }
 interface IState {
   type: string,
@@ -53,27 +54,31 @@ class Login extends React.Component<IProps, IState> {
     this.setState({ "type": key });
   }
 
+  private verifyPhone(area: string, phone: string):boolean {
+    return PHONE_REGS[area.toString()].test(phone)
+  }
+
   private onPhoneChange(event: React.ChangeEvent<HTMLInputElement>): void {
     // update phone;
     const val = event.target.value;
-    const validPhone = PHONE_REGS[this.state.area.toString()].test(val);
-    this.setState({ "phone": val, "validPhone": validPhone });
+    this.setState({ "phone": val, "validPhone": this.verifyPhone(this.state.area, val) });
   }
 
   private onAreaChange(value: string): void {
     // update area;
-    this.setState({ "area": value });
+    this.setState({ "area": value }, () => {
+      this.setState({ "validPhone": this.verifyPhone(this.state.area, this.state.phone)});
+    });
   }
 
   private onClickGetCaptcha(): void {
-    this.setState({ "captchBtnClicked": true });
     // set timer for TIME s
     this.captchaTimer = setInterval(() => {
       if (this.state.counter < 1) {
         this.setState({ "counter": TIME, "captchBtnClicked": false });
         clearInterval(this.captchaTimer);
       }
-      this.setState({ "counter": this.state.counter - 1 });
+      this.setState({ "counter": this.state.counter - 1, "captchBtnClicked": true });
       console.log(!(this.state.validPhone && !this.state.captchBtnClicked));
     }, 1000);
     this.props.onGetCaptcha(`+${this.state.area}${this.state.phone}`);
@@ -145,6 +150,7 @@ class Login extends React.Component<IProps, IState> {
             value={this.state.phone}
             onChange={(e) => this.onPhoneChange(e)}
             placeholder="手机号码"
+            autoComplete="off"
             type="number"
             style={{ "paddingBottom": "24px" }}
           />
@@ -163,12 +169,11 @@ class Login extends React.Component<IProps, IState> {
                 prefix={<NumberOutlined />}
                 maxLength={6}
                 type="tel"
-                placeholder="短信验证码"
+                placeholder="6 位短信验证码"
+                autoComplete="off"
                 addonAfter={
                   <Button type="text"
-                    id={this.props.verifierId}
                     onClick={() => this.onClickGetCaptcha()}
-                    // TODO: fix bug 在开始计时后 disabled 属性失效。
                     disabled={!(this.state.validPhone && !this.state.captchBtnClicked)}
                   >
                     {
@@ -188,6 +193,7 @@ class Login extends React.Component<IProps, IState> {
                 登录
               </Button>
             </Form.Item>
+            <p id={this.props.verifierId}></p>
           </Form>
         </div>
       )
@@ -204,7 +210,7 @@ class Login extends React.Component<IProps, IState> {
           </Link>
         </div>
 
-        <Tabs defaultActiveKey="phone" onChange={(key) => this.onTabChange(key)}>
+        <Tabs defaultActiveKey="email" onChange={(key) => this.onTabChange(key)}>
           <TabPane tab="邮箱登录" key="email">
             {contentList.email}
           </TabPane>
@@ -215,9 +221,10 @@ class Login extends React.Component<IProps, IState> {
         <Divider plain>
           通过第三方平台
         </Divider>
-        <Button icon={<GoogleOutlined />} size="large" type="primary" block>
-          使用 Google 登录
-        </Button>
+        <div style={{ "textAlign": "center" }}>
+          <Button size="large" type="primary" shape="circle" icon={<GoogleOutlined />} onClick={this.props.onLoginViaGoogle} />
+          <Button size="large" type="primary" shape="circle" icon={<WechatOutlined />} style={{ "marginLeft": "12px" }} />
+        </div>
       </Space>
     );
   }

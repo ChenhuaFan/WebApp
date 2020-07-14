@@ -2,11 +2,10 @@ import * as React from 'react';
 import Login from '../components/Login';
 import { Row, Col } from 'antd';
 import styles from '../static/styles/loginLayout.module.css'
-import firebase from '../config/firebase'
+import fb from '../config/firebase'
 import { Store } from 'antd/lib/form/interface';
 
-// constant variable
-const VERIFIED_ID = 'get-captcha-button';
+const { firebase, VERIFIED_ID } = fb;
 
 // interface
 declare global {
@@ -37,14 +36,14 @@ class LoginContainer extends React.Component<{}, {}> {
     this.confirmationResult = null;
   }
 
-  private onLoginViaEmail(values: Store) {
+  private onLoginViaEmail(values: Store): void {
     firebase.auth().signInWithEmailAndPassword(values.email, values.password).catch(error => {
       // TODO: Handle Errors here.
       console.error(error.code, error.message)
     });
   }
 
-  private onGetCaptcha(phone: string) {
+  private onGetCaptcha(phone: string): void {
     // init phone verifier
     const recaptchaVerifier = new firebase.auth.RecaptchaVerifier(VERIFIED_ID, {
       'size': 'invisible',
@@ -61,9 +60,18 @@ class LoginContainer extends React.Component<{}, {}> {
       });
   }
 
-  private onLoginViaPhone(values: Store) {
+  private onLoginViaPhone(values: Store): void {
     this.confirmationResult.confirm(values.captcha).catch((error: any) => {
       // TODO: User couldn't sign in (bad verification code?)
+      console.error(error.code, error.message)
+    });
+  }
+
+  private onLoginViaGoogle(): void {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().useDeviceLanguage();
+    firebase.auth().signInWithPopup(provider).catch(error => {
+      // TODO: Handle Errors here.
       console.error(error.code, error.message)
     });
   }
@@ -77,6 +85,7 @@ class LoginContainer extends React.Component<{}, {}> {
             onGetCaptcha={(phone) => this.onGetCaptcha(phone)}
             onLoginViaEmail={(values: Store) => this.onLoginViaEmail(values)}
             onLoginViaPhone={(values: Store) => this.onLoginViaPhone(values)}
+            onLoginViaGoogle={() => this.onLoginViaGoogle()}
           ></Login>
         </Col>
       </Row>

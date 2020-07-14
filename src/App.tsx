@@ -1,5 +1,5 @@
 import React from 'react';
-import LoginContainer from './containers/LoginLayout';
+import LoginContainer from './views/LoginLayout';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 // init antd

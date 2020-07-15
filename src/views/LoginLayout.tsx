@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Login from '../components/Login';
-import { Row, Col } from 'antd';
+import { Row, Col, message } from 'antd';
 import styles from '../static/styles/loginLayout.module.css'
 import fb from '../firebase'
 import { Store } from 'antd/lib/form/interface';
@@ -8,38 +8,26 @@ import { Store } from 'antd/lib/form/interface';
 const { firebase, VERIFIED_ID } = fb;
 
 // interface
-declare global {
-  interface Window {
-    confirmationResult: any;
-  }
-}
+// declare global {
+//   interface Window {
+//     confirmationResult: any;
+//   }
+// }
 interface LoginContainer {
-  confirmationResult: any;
+  confirmationResult?: firebase.auth.ConfirmationResult;
 }
-
-// set firebase user watcher
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    // User is signed in.
-    console.log(user.uid);
-    // TODO: login phase II.
-  } else {
-    // User is signed out.
-    // TODO: logout phase II.
-  }
-});
 
 class LoginContainer extends React.Component<{}, {}> {
 
   public constructor(props: {}) {
     super(props);
-    this.confirmationResult = null;
+    this.confirmationResult = undefined;
   }
 
   private onLoginViaEmail(values: Store): void {
     firebase.auth().signInWithEmailAndPassword(values.email, values.password).catch(error => {
       // TODO: Handle Errors here.
-      console.error(error.code, error.message)
+      message.error(`邮箱或密码错误`, 5);
     });
   }
 
@@ -48,7 +36,8 @@ class LoginContainer extends React.Component<{}, {}> {
     const recaptchaVerifier = new firebase.auth.RecaptchaVerifier(VERIFIED_ID, {
       'size': 'invisible',
       'callback': function (response: any) {
-        console.log("已验证");
+        console.log(response);
+        message.success(`人机检测通过，短信已发送`);
       }
     });
     firebase.auth().signInWithPhoneNumber(phone, recaptchaVerifier)
@@ -56,23 +45,28 @@ class LoginContainer extends React.Component<{}, {}> {
         this.confirmationResult = confirmationResult;
       }).catch(error => {
         // TODO: Handle Error; SMS not sent
-        console.error(error.code, error.message)
+        message.error(`短信发送失败`, 5);
       });
   }
 
   private onLoginViaPhone(values: Store): void {
-    this.confirmationResult.confirm(values.captcha).catch((error: any) => {
-      // TODO: User couldn't sign in (bad verification code?)
-      console.error(error.code, error.message)
-    });
+    if (this.confirmationResult) {
+      this.confirmationResult.confirm(values.captcha).catch((error: any) => {
+        // TODO: User couldn't sign in (bad verification code?)
+        message.error(`验证码错误`, 5);
+      });
+      return;
+    }
+    // TODO: error: confirmationResult is undefined.
+    message.error(`未通过人机检测 `, 5);
   }
 
   private onLoginViaGoogle(): void {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().useDeviceLanguage();
     firebase.auth().signInWithPopup(provider).catch(error => {
-      // TODO: Handle Errors here.
-      console.error(error.code, error.message)
+      // Handle Errors here.
+        message.error(`Google 登录失败`, 5);
     });
   }
 

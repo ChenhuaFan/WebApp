@@ -1,28 +1,32 @@
 import * as React from 'react';
-import Login from '../components/Login';
-import { Row, Col, message } from 'antd';
-import styles from '../static/styles/loginLayout.module.css'
+import Login from '../components/FirebaseAuthUI';
+import { message } from 'antd';
 import fb from '../firebase'
 import { Store } from 'antd/lib/form/interface';
 
 const { firebase, VERIFIED_ID } = fb;
 
 // interface
-interface LoginContainer {
+interface IProps {
+  title: JSX.Element,
+  isLogin: boolean
+}
+
+interface FireBaseAuth {
   confirmationResult?: firebase.auth.ConfirmationResult;
   recaptchaVerifier?: firebase.auth.RecaptchaVerifier;
 }
 
-class LoginContainer extends React.Component<{}, {}> {
+class FireBaseAuth extends React.Component<IProps, {}> {
 
-  public constructor(props: {}) {
+  public constructor(props: IProps) {
     super(props);
     this.confirmationResult = undefined;
     this.recaptchaVerifier = undefined;
   }
 
   componentDidMount() {
-    // 在挂载时加载人机验证组件
+    // load Repcaptcha verifier.
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(VERIFIED_ID, {
       'size': 'invisible',
       'callback': function (response: any) {
@@ -69,22 +73,23 @@ class LoginContainer extends React.Component<{}, {}> {
     });
   }
 
-  public render() {
+  public render(): JSX.Element {
     return (
-      <Row justify="center">
-        <Col xs={24} sm={24} md={12} lg={8} className={styles.wrapper}>
+      (
+        <div>
           <p id={VERIFIED_ID}></p>
           <Login
-            verifierId={VERIFIED_ID}
+            title={this.props.title}
+            isLogin={this.props.isLogin}
             onGetCaptcha={(phone) => this.onGetCaptcha(phone)}
             onLoginViaEmail={(values: Store) => this.onLoginViaEmail(values)}
             onLoginViaPhone={(values: Store) => this.onLoginViaPhone(values)}
             onLoginViaGoogle={() => this.onLoginViaGoogle()}
           ></Login>
-        </Col>
-      </Row>
+        </div>
+      )
     );
   }
 }
 
-export default LoginContainer;
+export default FireBaseAuth;

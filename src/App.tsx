@@ -1,5 +1,6 @@
 import React from 'react';
-import LoginContainer from './views/LoginLayout';
+import LoginContainer from './views/LoginContainer';
+import RegisterContainer from './views/RegisterContainer';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 // init antd
@@ -11,17 +12,20 @@ import './config/styles/App.less';
 
 moment.locale('zh-cn');
 
-function App() {
-  return (
-    <ConfigProvider locale={zhCN}>
-      <BrowserRouter>
-        <Switch>
-          <Route exact={true} path="/" render={() => <p>主页</p>} />
-          <Route exact={true} path="/login" render={() => <LoginContainer />} />
-        </Switch>
-      </BrowserRouter>
-    </ConfigProvider>
-  );
+class App extends React.Component<{}, {}> {
+  render () {
+    return (
+      <ConfigProvider locale={zhCN}>
+        <BrowserRouter>
+          <Switch>
+            <Route exact={true} path="/login" component={LoginContainer}/>
+            <Route exact={true} path="/register/:step" component={RegisterContainer} />
+            <Route exact={true} path="/" render={() => <p>主页</p>} />
+          </Switch>
+        </BrowserRouter>
+      </ConfigProvider>
+    );
+  }
 }
 
 export default App;

@@ -4,14 +4,15 @@ import { MailOutlined, LockOutlined, GoogleOutlined, PhoneOutlined, NumberOutlin
 import { Store } from 'antd/lib/form/interface';
 import EntranceEnums from "../enums/Entrance";
 
-const { Title, Text, Link } = Typography;
+const { Text, Link } = Typography;
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { PHONE_REGS, TIME } = EntranceEnums;
 
 // interfaces
 interface IProps {
-  verifierId: string,
+  title: JSX.Element,
+  isLogin: boolean,
   onGetCaptcha: (phone: string) => void,
   onLoginViaEmail: (values: Store) => void,
   onLoginViaPhone: (values: Store) => void,
@@ -25,11 +26,14 @@ interface IState {
   phone: string,
   counter: number
 }
-interface Login {
+interface FirebaseAuthUI {
   captchaTimer?: NodeJS.Timeout
 }
+interface JSXMap {
+  [propName: string]: JSX.Element;
+}
 
-class Login extends React.Component<IProps, IState> {
+class FirebaseAuthUI extends React.Component<IProps, IState> {
 
   public constructor(props: IProps) {
     super(props);
@@ -81,7 +85,7 @@ class Login extends React.Component<IProps, IState> {
 
   public render() {
 
-    const selectBefore = (
+    const selectBefore:JSX.Element = (
       <Select
         defaultValue={this.state.area}
         className="select-before"
@@ -90,126 +94,127 @@ class Login extends React.Component<IProps, IState> {
         <Option value="86"><span role="img" aria-label="中国">🇨🇳</span> 86</Option>
         <Option value="1"><span role="img" aria-label="United States">🇺🇸</span> 1</Option>
       </Select>
-    );
-    const contentList =
-    {
-      email: (
-        <Form
-          name="normal_login"
-          className="login-form"
-          initialValues={{ remember: true }}
-          onFinish={this.props.onLoginViaEmail}
-        >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: '请输入您的邮箱' },
-              {}
-            ]}
-          >
-            <Input size="large" prefix={<MailOutlined />} type="email" placeholder="邮箱" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: '请输入您的密码' }]}
-          >
-            <Input
-              size="large"
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>保持登录</Checkbox>
-            </Form.Item>
-          </Form.Item>
-          <Form.Item>
-            <Button size="large" type="primary" htmlType="submit" block>
-              登录
-            </Button>
-          </Form.Item>
-          <Text>登录遇到了问题？</Text>
+    ),
+      buttonText: string = this.props.isLogin ? "登录" : "注册",
+      findPassWord: JSX.Element | string = this.props.isLogin ? (
+        <div className="findPW">
+          <Text>{buttonText}遇到了问题？</Text>
           <Link href="https://ant.design" target="_blank">
             找回密码
           </Link>
-        </Form>
-      ),
-      phone: (
-        <div>
-          <Input
-            size="large"
-            prefix={<PhoneOutlined />}
-            addonBefore={selectBefore}
-            value={this.state.phone}
-            onChange={(e) => this.onPhoneChange(e)}
-            placeholder="手机号码"
-            autoComplete="off"
-            type="number"
-            style={{ "paddingBottom": "24px" }}
-          />
+        </div>
+      ) : "",
+      contentList:JSXMap = {
+        email: (
           <Form
             name="normal_login"
             className="login-form"
             initialValues={{ remember: true }}
-            onFinish={this.props.onLoginViaPhone}
+            onFinish={this.props.onLoginViaEmail}
           >
             <Form.Item
-              name="captcha"
-              rules={[{ required: true, message: '请输入6位验证码' }]}
+              name="email"
+              rules={[
+                { required: true, message: '请输入您的邮箱' },
+                {}
+              ]}
+            >
+              <Input size="large" prefix={<MailOutlined />} type="email" placeholder="邮箱" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: '请输入您的密码' }]}
             >
               <Input
                 size="large"
-                prefix={<NumberOutlined />}
-                maxLength={6}
-                type="tel"
-                placeholder="6 位短信验证码"
-                autoComplete="off"
-                addonAfter={
-                  <Button type="text"
-                    onClick={() => this.onClickGetCaptcha()}
-                    disabled={!(this.state.validPhone && !this.state.captchBtnClicked)}
-                  >
-                    { !this.state.captchBtnClicked ? "获取验证码" : `${this.state.counter} 秒` }
-                  </Button>
-                }
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="Password"
               />
             </Form.Item>
             <Form.Item>
               <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>保持登录</Checkbox>
+                <Checkbox>记住我</Checkbox>
               </Form.Item>
             </Form.Item>
             <Form.Item>
-              <Button
-                size="large"
-                type="primary"
-                htmlType="submit"
-                block
-              >
-                登录
+              <Button size="large" type="primary" htmlType="submit" block>
+                {buttonText}
               </Button>
             </Form.Item>
+            {findPassWord}
           </Form>
-        </div>
-      )
-    }
+        ),
+        phone: (
+          <div>
+            <Input
+              size="large"
+              prefix={<PhoneOutlined />}
+              addonBefore={selectBefore}
+              value={this.state.phone}
+              onChange={(e) => this.onPhoneChange(e)}
+              placeholder="手机号码"
+              autoComplete="off"
+              type="number"
+              style={{ "paddingBottom": "24px" }}
+            />
+            <Form
+              name="normal_login"
+              className="login-form"
+              initialValues={{ remember: true }}
+              onFinish={this.props.onLoginViaPhone}
+            >
+              <Form.Item
+                name="captcha"
+                rules={[{ required: true, message: '请输入6位验证码' }]}
+              >
+                <Input
+                  size="large"
+                  prefix={<NumberOutlined />}
+                  maxLength={6}
+                  type="tel"
+                  placeholder="6 位短信验证码"
+                  autoComplete="off"
+                  addonAfter={
+                    <Button type="text"
+                      onClick={() => this.onClickGetCaptcha()}
+                      disabled={!(this.state.validPhone && !this.state.captchBtnClicked)}
+                    >
+                      {!this.state.captchBtnClicked ? "获取验证码" : `${this.state.counter} 秒`}
+                    </Button>
+                  }
+                />
+              </Form.Item>
+              <Form.Item>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>保持{buttonText}</Checkbox>
+                </Form.Item>
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  size="large"
+                  type="primary"
+                  htmlType="submit"
+                  block
+                >
+                  {buttonText}
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        )
+      }
 
     return (
       <Space direction="vertical" style={{ width: "100%" }}>
         <div style={{ "paddingBottom": "48px" }}>
-          <Title>登录</Title>
-          <Text>没有账户？ 马上</Text>
-          <Link href="https://ant.design" target="_blank">
-            注册
-          </Link>
+          {this.props.title}
         </div>
         <Tabs defaultActiveKey="email" onChange={(key) => this.onTabChange(key)}>
-          <TabPane tab="邮箱登录" key="email">
+          <TabPane tab={`邮箱${buttonText}`} key="email">
             {contentList.email}
           </TabPane>
-          <TabPane tab="手机登录" key="phone">
+          <TabPane tab={`手机${buttonText}`} key="phone">
             {contentList.phone}
           </TabPane>
         </Tabs>
@@ -225,4 +230,4 @@ class Login extends React.Component<IProps, IState> {
   }
 }
 
-export default Login;
+export default FirebaseAuthUI;

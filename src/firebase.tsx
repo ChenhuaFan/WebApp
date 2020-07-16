@@ -1,5 +1,6 @@
-import * as firebase from "firebase";
 import config from "./config/firebase/fbConfig";
+import * as firebase from "firebase/app";
+import "firebase/auth"
 import { message } from "antd";
 
 firebase.initializeApp(config)
@@ -11,7 +12,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     // TODO: login phase II.
     message.success(`账号验证成功：${user.uid}`);
     // dispatch redux action
-    
+
   } else {
     // User is signed out.
     message.info(`您已退出登录`);

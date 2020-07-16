@@ -87,8 +87,8 @@ class Login extends React.Component<IProps, IState> {
         className="select-before"
         onChange={(v) => this.onAreaChange(v)}
       >
-        <Option value="86">🇨🇳 86</Option>
-        <Option value="1">🇺🇸 1</Option>
+        <Option value="86"><span role="img" aria-label="中国">🇨🇳</span> 86</Option>
+        <Option value="1"><span role="img" aria-label="United States">🇺🇸</span> 1</Option>
       </Select>
     );
     const contentList =

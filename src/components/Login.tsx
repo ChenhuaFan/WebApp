@@ -2,20 +2,14 @@ import * as React from 'react';
 import { Typography, Space, Divider, Form, Input, Button, Checkbox, Tabs, Select } from 'antd';
 import { MailOutlined, LockOutlined, GoogleOutlined, PhoneOutlined, NumberOutlined, WechatOutlined } from '@ant-design/icons';
 import { Store } from 'antd/lib/form/interface';
+import EntranceEnums from "../enums/Entrance";
 
 const { Title, Text, Link } = Typography;
 const { TabPane } = Tabs;
 const { Option } = Select;
+const { PHONE_REGS, TIME } = EntranceEnums;
 
-// constant variable
-const
-  PHONE_REGS: any = {
-    "1": /^(\(\d{3}\)|\d{3})\s?-?\d{3}-?\s?\d{4}$/,
-    "86": /^1[3456789]\d{9}$/
-  },
-  TIME = 60;
-
-// interface
+// interfaces
 interface IProps {
   verifierId: string,
   onGetCaptcha: (phone: string) => void,
@@ -32,7 +26,7 @@ interface IState {
   counter: number
 }
 interface Login {
-  captchaTimer: any
+  captchaTimer?: NodeJS.Timeout
 }
 
 class Login extends React.Component<IProps, IState> {
@@ -47,15 +41,15 @@ class Login extends React.Component<IProps, IState> {
       phone: "",
       counter: TIME
     }
-    this.captchaTimer = null;
+    this.captchaTimer = undefined;
   }
 
   private onTabChange(key: string): void {
     this.setState({ "type": key });
   }
 
-  private verifyPhone(area: string, phone: string):boolean {
-    return PHONE_REGS[area.toString()].test(phone)
+  private verifyPhone(area: string, phone: string): boolean {
+    return PHONE_REGS[area].test(phone)
   }
 
   private onPhoneChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -67,18 +61,19 @@ class Login extends React.Component<IProps, IState> {
   private onAreaChange(value: string): void {
     // update area;
     this.setState({ "area": value }, () => {
-      this.setState({ "validPhone": this.verifyPhone(this.state.area, this.state.phone)});
+      this.setState({ "validPhone": this.verifyPhone(this.state.area, this.state.phone) });
     });
   }
 
   private onClickGetCaptcha(): void {
+    this.setState({ "captchBtnClicked": true });
     // set timer for TIME s
     this.captchaTimer = setInterval(() => {
       if (this.state.counter < 1) {
         this.setState({ "counter": TIME, "captchBtnClicked": false });
-        clearInterval(this.captchaTimer);
+        if (this.captchaTimer) clearInterval(this.captchaTimer);
       }
-      this.setState({ "counter": this.state.counter - 1, "captchBtnClicked": true });
+      this.setState({ "counter": this.state.counter - 1 });
       console.log(!(this.state.validPhone && !this.state.captchBtnClicked));
     }, 1000);
     this.props.onGetCaptcha(`+${this.state.area}${this.state.phone}`);
@@ -176,9 +171,7 @@ class Login extends React.Component<IProps, IState> {
                     onClick={() => this.onClickGetCaptcha()}
                     disabled={!(this.state.validPhone && !this.state.captchBtnClicked)}
                   >
-                    {
-                      !this.state.captchBtnClicked ? "获取验证码" : `${this.state.counter} 秒`
-                    }
+                    { !this.state.captchBtnClicked ? "获取验证码" : `${this.state.counter} 秒` }
                   </Button>
                 }
               />
@@ -189,11 +182,15 @@ class Login extends React.Component<IProps, IState> {
               </Form.Item>
             </Form.Item>
             <Form.Item>
-              <Button size="large" type="primary" htmlType="submit" disabled={!this.state.captchBtnClicked} block>
+              <Button
+                size="large"
+                type="primary"
+                htmlType="submit"
+                block
+              >
                 登录
               </Button>
             </Form.Item>
-            <p id={this.props.verifierId}></p>
           </Form>
         </div>
       )
@@ -201,7 +198,6 @@ class Login extends React.Component<IProps, IState> {
 
     return (
       <Space direction="vertical" style={{ width: "100%" }}>
-
         <div style={{ "paddingBottom": "48px" }}>
           <Title>登录</Title>
           <Text>没有账户？ 马上</Text>
@@ -209,7 +205,6 @@ class Login extends React.Component<IProps, IState> {
             注册
           </Link>
         </div>
-
         <Tabs defaultActiveKey="email" onChange={(key) => this.onTabChange(key)}>
           <TabPane tab="邮箱登录" key="email">
             {contentList.email}

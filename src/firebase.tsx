@@ -10,6 +10,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     // firebase user is signed in.
     // TODO: login phase II.
     message.success(`账号验证成功：${user.uid}`);
+    // dispatch redux action
+    
   } else {
     // User is signed out.
     message.info(`您已退出登录`);

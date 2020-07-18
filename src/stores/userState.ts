@@ -20,7 +20,7 @@ export class UserState {
   }
 
   public get isLogin(): boolean {
-    return true;
+    return this._fbUser === undefined;
   }
 
   public isFireBaseUserChanged(newUId: string): boolean {

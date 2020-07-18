@@ -1,10 +1,12 @@
+// app
 import * as React from 'react';
 import Login from '../components/FirebaseAuthUI';
 import { message } from 'antd';
-import fb from '../firebase'
 import { Store } from 'antd/lib/form/interface';
-
-const { firebase, VERIFIED_ID } = fb;
+import { VERIFIED_ID } from '../enums/Entrance'
+// firebase
+import * as firebase from "firebase/app";
+import "firebase/auth"
 
 // interface
 interface IProps {
@@ -36,9 +38,13 @@ class FireBaseAuth extends React.Component<IProps, {}> {
   }
 
   private onLoginViaEmail(values: Store): void {
-    firebase.auth().signInWithEmailAndPassword(values.email, values.password).catch(error => {
-      message.error(`邮箱或密码错误`, 5);
-    });
+    firebase.auth().signInWithEmailAndPassword(values.email, values.password)
+      .then(res => {
+        if (res.user) message.success(`登录成功：${res.user.displayName}`);
+      })
+      .catch(error => {
+        message.error(`邮箱或密码错误`, 5);
+      });
   }
 
   private onGetCaptcha(phone: string): void {
@@ -47,6 +53,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
       firebase.auth().signInWithPhoneNumber(phone, this.recaptchaVerifier)
         .then((confirmationResult: firebase.auth.ConfirmationResult) => {
           this.confirmationResult = confirmationResult;
+          message.success(`已通过人机检测`)
         }).catch(error => {
           message.error(`短信发送失败: ${error}`, 5);
         });
@@ -57,9 +64,13 @@ class FireBaseAuth extends React.Component<IProps, {}> {
 
   private onLoginViaPhone(values: Store): void {
     if (this.confirmationResult) {
-      this.confirmationResult.confirm(values.captcha).catch((error: any) => {
-        message.error(`验证码错误: ${error}`, 5);
-      });
+      this.confirmationResult.confirm(values.captcha)
+        .then(res => {
+          if (res.user) message.success(`登录成功：${res.user.displayName}`);
+        })
+        .catch((error: any) => {
+          message.error(`验证码错误: ${error}`, 5);
+        });
       return;
     }
     message.error(`未通过人机检测`, 5);
@@ -68,9 +79,13 @@ class FireBaseAuth extends React.Component<IProps, {}> {
   private onLoginViaGoogle(): void {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().useDeviceLanguage();
-    firebase.auth().signInWithPopup(provider).catch(error => {
-      message.error(`Google 登录失败: ${error}`, 5);
-    });
+    firebase.auth().signInWithPopup(provider)
+      .then(res => {
+        if (res.user) message.success(`登录成功：${res.user.displayName}`);
+      })
+      .catch(error => {
+        message.error(`Google 登录失败: ${error}`, 5);
+      });
   }
 
   public render(): JSX.Element {

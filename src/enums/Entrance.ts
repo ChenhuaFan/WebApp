@@ -8,12 +8,14 @@ interface EntranceEnums {
 }
 
 // Enums using for Login and Regster components.
-const EntranceEnums: EntranceEnums = {
+export const EntranceEnums: EntranceEnums = {
     "PHONE_REGS": {
         "1": /^(\(\d{3}\)|\d{3})\s?-?\d{3}-?\s?\d{4}$/,
         "86": /^1[3456789]\d{9}$/
       },
     "TIME": 60,
 }
+
+export const VERIFIED_ID = 'get-captcha-button';
 
 export default EntranceEnums;

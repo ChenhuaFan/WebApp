@@ -19,7 +19,8 @@ class App extends React.Component<{}, {}> {
         <BrowserRouter>
           <Switch>
             <Route exact={true} path="/login" component={LoginContainer}/>
-            <Route exact={true} path="/register/:step" component={RegisterContainer} />
+            <Route exact={true} path="/register" component={RegisterContainer} />
+            <Route exact={true} path="/customize" component={RegisterContainer} />
             <Route exact={true} path="/" render={() => <p>主页</p>} />
           </Switch>
         </BrowserRouter>

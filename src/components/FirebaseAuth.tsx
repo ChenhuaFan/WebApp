@@ -42,13 +42,13 @@ class FireBaseAuth extends React.Component<IProps, {}> {
   }
 
   private onGetCaptcha(phone: string): void {
-    // init phone verifier
+    // init captcha verifier
     if (this.recaptchaVerifier) {
       firebase.auth().signInWithPhoneNumber(phone, this.recaptchaVerifier)
         .then((confirmationResult: firebase.auth.ConfirmationResult) => {
           this.confirmationResult = confirmationResult;
         }).catch(error => {
-          message.error(`短信发送失败`, 5);
+          message.error(`短信发送失败: ${error}`, 5);
         });
       return;
     }
@@ -58,7 +58,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
   private onLoginViaPhone(values: Store): void {
     if (this.confirmationResult) {
       this.confirmationResult.confirm(values.captcha).catch((error: any) => {
-        message.error(`验证码错误`, 5);
+        message.error(`验证码错误: ${error}`, 5);
       });
       return;
     }
@@ -69,7 +69,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().useDeviceLanguage();
     firebase.auth().signInWithPopup(provider).catch(error => {
-      message.error(`Google 登录失败`, 5);
+      message.error(`Google 登录失败: ${error}`, 5);
     });
   }
 

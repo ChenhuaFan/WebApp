@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Row, Col, Typography } from 'antd';
+import { IdcardTwoTone } from '@ant-design/icons';
 import FirebaseAuth from '../components/FirebaseAuth';
 import styles from '../static/styles/loginLayout.module.css'
 
@@ -18,10 +19,10 @@ class LoginContainer extends React.Component<{}, {}> {
 
   public render() {
     const title = (
-      <div>
-        <Title>登录</Title>
-        <Text>还没有账号？</Text>
-        <Link>注册</Link>
+      <div style={{"textAlign": "center"}}>
+        <Title><IdcardTwoTone twoToneColor="#eb2f96" rotate={-15} style={{"paddingRight": "12px"}}/> 欢迎回来</Title>
+        <Text>还没有加入 RentHouse ？</Text>
+        <Link href="/register">注册</Link>
       </div>
     )
     return (

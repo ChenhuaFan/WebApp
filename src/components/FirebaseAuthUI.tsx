@@ -85,7 +85,7 @@ class FirebaseAuthUI extends React.Component<IProps, IState> {
 
   public render() {
 
-    const selectBefore:JSX.Element = (
+    const selectBefore: JSX.Element = (
       <Select
         defaultValue={this.state.area}
         className="select-before"
@@ -104,7 +104,20 @@ class FirebaseAuthUI extends React.Component<IProps, IState> {
           </Link>
         </div>
       ) : "",
-      contentList:JSXMap = {
+      pravicy: JSX.Element | string = !this.props.isLogin ? (
+        <Form.Item
+          name="agreement"
+          valuePropName="checked"
+          rules={[
+            { validator: (_, value) => value ? Promise.resolve() : Promise.reject('您需要同意我们的隐私权政策') },
+          ]}
+        >
+          <Checkbox>
+            同意 RentHouse <a href="/">隐私权政策</a>
+          </Checkbox>
+        </Form.Item>
+      ) : "",
+      contentList: JSXMap = {
         email: (
           <Form
             name="normal_login"
@@ -137,6 +150,7 @@ class FirebaseAuthUI extends React.Component<IProps, IState> {
                 <Checkbox>记住我</Checkbox>
               </Form.Item>
             </Form.Item>
+            {pravicy}
             <Form.Item>
               <Button size="large" type="primary" htmlType="submit" block>
                 {buttonText}
@@ -187,9 +201,10 @@ class FirebaseAuthUI extends React.Component<IProps, IState> {
               </Form.Item>
               <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>保持{buttonText}</Checkbox>
+                  <Checkbox>记住我</Checkbox>
                 </Form.Item>
               </Form.Item>
+              {pravicy}
               <Form.Item>
                 <Button
                   size="large"

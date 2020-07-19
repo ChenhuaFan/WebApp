@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Typography, Space, Divider, Form, Input, Button, Checkbox, Tabs, Select } from 'antd';
 import { MailOutlined, LockOutlined, GoogleOutlined, PhoneOutlined, NumberOutlined, WechatOutlined } from '@ant-design/icons';
 import { Store } from 'antd/lib/form/interface';
-import EntranceEnums from "../enums/Entrance";
+import { EntranceEnums } from "../enums/Entrance";
 
 const { Text, Link } = Typography;
 const { TabPane } = Tabs;

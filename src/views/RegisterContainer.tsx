@@ -2,6 +2,7 @@
 import React from "react";
 import styles from '../static/styles/loginLayout.module.css'
 import { RouteProps } from "react-router-dom";
+import { UserPhase } from '../enums/Entrance';
 // components
 import SetUserInfo from "../components/SetUserInfo";
 import FirebaseAuth from '../components/FirebaseAuth';
@@ -29,7 +30,7 @@ class RegisterLayout extends React.Component<IRouterProps, {}> {
     // step: 1 => register via firebase. step: 2 => register our own user module.
     let content: JSX.Element;
     switch (this.props.step) {
-      case 1:
+      case UserPhase.PHASE_I:
         content = (
           <FirebaseAuth
             title={
@@ -43,11 +44,12 @@ class RegisterLayout extends React.Component<IRouterProps, {}> {
           />
         )
         break;
-      case 2:
+      case UserPhase.PHASE_II:
         content = (
           <div>
             <div style={{ "textAlign": "center" }}>
-              <Title><IdcardTwoTone twoToneColor="#eb2f96" rotate={-15} style={{ "paddingRight": "12px" }} />个性化</Title>
+              <Title><IdcardTwoTone twoToneColor="#eb2f96" rotate={-15} style={{ "paddingRight": "12px" }} />还差一步！</Title>
+              <Text>个性化您的信息</Text>
             </div>
             <br />
             <SetUserInfo />

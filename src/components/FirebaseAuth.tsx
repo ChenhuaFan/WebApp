@@ -7,6 +7,9 @@ import { VERIFIED_ID } from '../enums/Entrance'
 // firebase
 import * as firebase from "firebase/app";
 import "firebase/auth"
+// redux
+import { userStore } from '../stores';
+import { setFirebaseUserAction } from '../actions/userAction';
 
 // interface
 interface IProps {
@@ -40,7 +43,11 @@ class FireBaseAuth extends React.Component<IProps, {}> {
   private onLoginViaEmail(values: Store): void {
     firebase.auth().signInWithEmailAndPassword(values.email, values.password)
       .then(res => {
-        if (res.user) message.success(`登录成功：${res.user.displayName}`);
+        if (res.user) {
+          message.success(`登录成功：${res.user.displayName}`);
+          userStore.dispatch(setFirebaseUserAction(res.user));
+          window.location.reload();
+        }
       })
       .catch(error => {
         message.error(`邮箱或密码错误`, 5);
@@ -53,7 +60,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
       firebase.auth().signInWithPhoneNumber(phone, this.recaptchaVerifier)
         .then((confirmationResult: firebase.auth.ConfirmationResult) => {
           this.confirmationResult = confirmationResult;
-          message.success(`已通过人机检测`)
+          message.success(`已通过人机检测`);
         }).catch(error => {
           message.error(`短信发送失败: ${error}`, 5);
         });
@@ -66,7 +73,11 @@ class FireBaseAuth extends React.Component<IProps, {}> {
     if (this.confirmationResult) {
       this.confirmationResult.confirm(values.captcha)
         .then(res => {
-          if (res.user) message.success(`登录成功：${res.user.displayName}`);
+          if (res.user) {
+            message.success(`登录成功：${res.user.displayName}`);
+            userStore.dispatch(setFirebaseUserAction(res.user));
+            window.location.reload();
+          }
         })
         .catch((error: any) => {
           message.error(`验证码错误: ${error}`, 5);
@@ -81,7 +92,11 @@ class FireBaseAuth extends React.Component<IProps, {}> {
     firebase.auth().useDeviceLanguage();
     firebase.auth().signInWithPopup(provider)
       .then(res => {
-        if (res.user) message.success(`登录成功：${res.user.displayName}`);
+        if (res.user) {
+          message.success(`登录成功：${res.user.displayName}`);
+          userStore.dispatch(setFirebaseUserAction(res.user));
+          window.location.reload();
+        }
       })
       .catch(error => {
         message.error(`Google 登录失败: ${error}`, 5);

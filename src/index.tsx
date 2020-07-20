@@ -1,5 +1,5 @@
 // firebase
-import config from "./config/firebase/fbConfig";
+import { config } from "./config/firebase";
 import * as firebase from "firebase/app";
 import "firebase/auth"
 // react

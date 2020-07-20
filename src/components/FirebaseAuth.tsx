@@ -8,7 +8,7 @@ import { VERIFIED_ID } from '../enums/Entrance'
 import * as firebase from "firebase/app";
 import "firebase/auth"
 // redux
-import { userStore } from '../stores';
+import { rentHouseStore } from '../stores';
 import { setFirebaseUserAction } from '../actions/userAction';
 
 // interface
@@ -45,7 +45,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
       .then(res => {
         if (res.user) {
           message.success(`登录成功：${res.user.displayName}`);
-          userStore.dispatch(setFirebaseUserAction(res.user));
+          rentHouseStore.dispatch(setFirebaseUserAction(res.user));
           window.location.reload();
         }
       })
@@ -75,7 +75,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
         .then(res => {
           if (res.user) {
             message.success(`登录成功：${res.user.displayName}`);
-            userStore.dispatch(setFirebaseUserAction(res.user));
+            rentHouseStore.dispatch(setFirebaseUserAction(res.user));
             window.location.reload();
           }
         })
@@ -94,7 +94,7 @@ class FireBaseAuth extends React.Component<IProps, {}> {
       .then(res => {
         if (res.user) {
           message.success(`登录成功：${res.user.displayName}`);
-          userStore.dispatch(setFirebaseUserAction(res.user));
+          rentHouseStore.dispatch(setFirebaseUserAction(res.user));
           window.location.reload();
         }
       })

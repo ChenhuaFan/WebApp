@@ -8,7 +8,6 @@ import * as firebase from "firebase/app";
 import "firebase/auth";
 import { message } from 'antd';
 
-
 class SetUserInfo extends React.Component<{}, {}> {
 
 	public onUpdateUser(values: Store): void {
@@ -19,9 +18,9 @@ class SetUserInfo extends React.Component<{}, {}> {
 				photoURL: "/static/imgs/avators/default.png",
 			})
 				.then(res => {
-					sessionStorage.setItem("userInfo", "true");
-					window.location.reload();
+					// sessionStorage.setItem("userInfo", "true");
 					message.success("注册成功");
+					window.location.reload();
 				})
 				.catch(err => {
 					message.error(`更新用户数据出错：${err}`);
@@ -31,7 +30,7 @@ class SetUserInfo extends React.Component<{}, {}> {
 
 	public render(): JSX.Element {
 		return (
-			<SetUserInfoUI onUpdateUserInfo={this.onUpdateUser} />
+			<SetUserInfoUI onUpdateUserInfo={this.onUpdateUser}/>
 		)
 	}
 

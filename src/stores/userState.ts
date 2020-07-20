@@ -1,41 +1,24 @@
 import { UserPhase } from '../enums/Entrance';
 
 export interface UserInfo {
-  _firstName: string;
-  _lastName: string;
   _description: string;
   _gender: string;
   _birthday: string;
-  _avatar_url: string;
   _role: string;
 }
 
 export class UserInfo {
 
   constructor(
-    firstName: string,
-    lastName: string,
     description: string = "一位友善的 RentHouse 会员",
     gender: string = "privacy",
     birthday: string = "2000-7-14",
-    avatar_url: string = "/static/imgs/avators/default.png",
     role: string = "user"
   ) {
-    this._firstName = firstName;
-    this._lastName = lastName;
     this._description = description;
     this._gender = gender;
     this._birthday = birthday;
-    this._avatar_url = avatar_url;
     this._role = role;
-  }
-
-  public get firstName(): string {
-    return this._firstName;
-  }
-
-  public get lastName(): string {
-    return this._lastName;
   }
 
   public get description(): string {
@@ -50,10 +33,6 @@ export class UserInfo {
     return this._birthday;
   }
 
-  public get avatar_url(): string {
-    return this._avatar_url;
-  }
-
   public get role(): string {
     return this._role;
   }
@@ -65,12 +44,12 @@ export interface UserState {
   _lastStage: string;
 }
 
+// UserState
 export class UserState {
 
   public constructor(fbUser: firebase.User | undefined = undefined, userInfo: UserInfo | undefined = undefined) {
     this._fbUser = fbUser;
     this._userInfo = userInfo;
-    this._lastStage = "login";
   }
 
   public get hasFBUser(): boolean {
@@ -89,8 +68,8 @@ export class UserState {
   }
 
   public get userPhase(): number {
-    if (!this.hasFBUser) return UserPhase.PHASE_I;
-    if (!this.hasUserInfo) return UserPhase.PHASE_II;
+    if (!this._fbUser) return UserPhase.PHASE_I;
+    if (!this._fbUser.photoURL) return UserPhase.PHASE_II;
     return UserPhase.LOGGED_IN;
   }
 
@@ -104,13 +83,5 @@ export class UserState {
 
   public get uid(): string {
     return this._fbUser ? this._fbUser.uid : "";
-  }
-
-  public get avatarUrl(): string {
-    return this._userInfo ? this._userInfo.avatar_url : "";
-  }
-
-  public get lastStage(): string {
-    return this._lastStage;
   }
 }

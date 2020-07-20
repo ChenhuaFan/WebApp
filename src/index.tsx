@@ -9,7 +9,8 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 // redux
-import { userStore } from './stores';
+import { Provider } from 'react-redux';
+import { rentHouseStore } from './stores';
 import { setFirebaseUserAction, resetUserState } from './actions/userAction';
 
 // init firebase auth
@@ -18,19 +19,18 @@ firebase.initializeApp(config)
 firebase.auth().onAuthStateChanged(
   (user: firebase.User | null): void => {
     if (user) {
-      // dispatch redux action to set firebase user object.
-      userStore.dispatch(setFirebaseUserAction(user));
-      // TODO: login phase II.
+      rentHouseStore.dispatch(setFirebaseUserAction(user));
     } else {
-      // User is signed out.
-      userStore.dispatch(resetUserState());
+      rentHouseStore.dispatch(resetUserState());
     }
   }
 );
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={rentHouseStore}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

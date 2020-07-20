@@ -1,34 +1,23 @@
 import React from 'react';
-import { Form, Input, Button, Radio, DatePicker } from 'antd';
+import { Form, Input, Button } from 'antd';
 import PhotoUpload from './PhotoUpload';
 import { Store } from 'antd/lib/form/interface';
+import { connect } from 'react-redux';
+import { UserState } from '../stores/userState';
 
 interface IProps {
   onUpdateUserInfo: (values: Store) => void;
+  uuid?: string
 }
 
 class SetUserInfoUI extends React.Component<IProps, {}> {
 
   public render(): JSX.Element {
 
-    interface stringMap {
-      [propName: string]: string;
-    }
-    const initialValues: stringMap = {
-      uuid: "123456789ABCDEFG",
-      gender: "privacy",
-      firstname: "Chenhua",
-      lastname: "Fan",
-      birthday: "",
-      description: "一位 RentHouse 用户",
-      role: "user"
-    }
-
     return (
       <>
         <Form
           layout="vertical"
-          initialValues={initialValues}
           size={"large"}
           onFinish={this.props.onUpdateUserInfo}
         >
@@ -36,30 +25,23 @@ class SetUserInfoUI extends React.Component<IProps, {}> {
             <PhotoUpload></PhotoUpload>
           </Form.Item>
           <Form.Item label="RentHouse 通行证" name="uuid">
-            <Input disabled={true} />
+            <Input disabled={true} placeholder={this.props.uuid} />
           </Form.Item>
-          <Form.Item label="性别" name="gender">
-            <Radio.Group>
-              <Radio.Button value="male">女</Radio.Button>
-              <Radio.Button value="female">男</Radio.Button>
-              <Radio.Button value="other">其他</Radio.Button>
-              <Radio.Button value="privacy">设为隐私</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="名" name="firstname">
+          <Form.Item
+            label="名"
+            name="firstname"
+            rules={[
+              { validator: (_, value) => value ? Promise.resolve() : Promise.reject('您需要同意我们的隐私权政策') },
+            ]}>
             <Input allowClear />
           </Form.Item>
-          <Form.Item label="姓" name="lastname">
+          <Form.Item
+            label="姓"
+            name="lastname"
+            rules={[
+              { validator: (_, value) => value ? Promise.resolve() : Promise.reject('您需要同意我们的隐私权政策') },
+            ]}>
             <Input allowClear />
-          </Form.Item>
-          <Form.Item label="生日" name="birthday">
-            <DatePicker />
-          </Form.Item>
-          <Form.Item label="关于您" name="description">
-            <Input.TextArea placeholder="一句话让别人了解您" autoSize allowClear />
-          </Form.Item>
-          <Form.Item label="role" name="role" style={{ "display": "none" }}>
-            <Input />
           </Form.Item>
           <Button type="primary" htmlType="submit" block>
             确定
@@ -71,4 +53,11 @@ class SetUserInfoUI extends React.Component<IProps, {}> {
 
 }
 
-export default SetUserInfoUI;
+const mapStateToProps = (state: UserState, ownProps: IProps) => {
+  return {
+    uuid: state.uid,
+    ...ownProps
+  }
+}
+
+export default connect(mapStateToProps)(SetUserInfoUI); 

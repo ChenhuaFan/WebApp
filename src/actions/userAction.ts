@@ -30,3 +30,10 @@ export const resetUserState = (): UserAction => {
     type: UserActionTypes.RESET_USERSTATE
   }
 }
+
+export const userActionCreator = (type: UserActionTypes, payload: any): UserAction => {
+  return {
+    type,
+    payload
+  }
+}

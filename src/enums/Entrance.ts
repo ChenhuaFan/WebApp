@@ -16,6 +16,7 @@ export const EntranceEnums: EntranceEnums = {
 	"TIME": 60,
 }
 
+// html element id for Google verifier.
 export const VERIFIED_ID = 'get-captcha-button';
 
 export enum UserPhase {

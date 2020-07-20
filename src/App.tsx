@@ -4,20 +4,22 @@ import LoginContainer from './views/LoginContainer';
 import RegisterContainer from './views/RegisterContainer';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { UserPhase } from './enums/Entrance';
-// firebase
-import * as firebase from "firebase/app";
-import "firebase/auth";
-// redux
-import { userStore } from './stores';
+// redux react
+import { connect } from 'react-redux';
 // init antd
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import './config/styles/App.less';
+import { UserState } from './stores/userState';
 moment.locale('zh-cn');
 
-class App extends React.Component<{}, {}> {
+interface IProps {
+  phase?: UserPhase;
+}
+
+class App extends React.Component<IProps, {}> {
   render() {
     return (
       <ConfigProvider locale={zhCN}>
@@ -28,16 +30,14 @@ class App extends React.Component<{}, {}> {
               path="/login"
               render={
                 ({ location }) => {
-                  /*
-                    firebase auth is a async function, so we can only check user state by sessionStorage.
-                  */
-                  if (!sessionStorage.getItem("uuid")) {
-                    return <LoginContainer />;
+                  switch (this.props.phase) {
+                    case UserPhase.PHASE_I:
+                      return <LoginContainer />;
+                    case UserPhase.PHASE_II:
+                      return <Redirect to={{ pathname: "/register", state: { from: location } }} />
+                    default:
+                      return <Redirect to={{ pathname: "/", state: { from: location } }} />
                   }
-                  if (!sessionStorage.getItem("userInfo")) {
-                    return <Redirect to={{ pathname: "/register", state: { from: location } }} />
-                  }
-                  return <Redirect to={{ pathname: "/", state: { from: location } }} />
                 }
               }
             />
@@ -46,17 +46,14 @@ class App extends React.Component<{}, {}> {
               path="/register"
               render={
                 ({ location }) => {
-                  /*
-                    firebase auth is a async function, so we can only check user state by sessionStorage.
-                  */
-                  console.log(firebase.auth().currentUser);
-                  if (!sessionStorage.getItem("uuid")) {
-                    return <RegisterContainer step={UserPhase.PHASE_I} />
+                  switch (this.props.phase) {
+                    case UserPhase.PHASE_I:
+                      return <RegisterContainer step={UserPhase.PHASE_I} />
+                    case UserPhase.PHASE_II:
+                      return <RegisterContainer step={UserPhase.PHASE_II} />
+                    default:
+                      return <Redirect to={{ pathname: "/", state: { from: location } }} />
                   }
-                  if (!sessionStorage.getItem("userInfo")) {
-                    return <RegisterContainer step={UserPhase.PHASE_II} />
-                  }
-                  return <Redirect to={{ pathname: "/", state: { from: location } }} />
                 }
               }
             />
@@ -68,4 +65,12 @@ class App extends React.Component<{}, {}> {
   }
 }
 
-export default App;
+const mapStateToProps = (state: UserState, ownProps: IProps) => {
+  return {
+    // phase: user login or register progress.
+    phase: state.userPhase,
+    ...ownProps
+  }
+}
+
+export default connect(mapStateToProps)(App);

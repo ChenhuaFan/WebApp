@@ -1,5 +1,3 @@
-import * as firebase from "firebase";
-
 const firebaseConfig = {
   apiKey: "AIzaSyC1dv6CI2MbPEEZkJLYXnurxsIp5rPXAEs",
   authDomain: "tencenttars.firebaseapp.com",
@@ -11,7 +9,5 @@ const firebaseConfig = {
   measurementId: "G-28SJCYVX8B"
 };
 
-firebase.initializeApp(firebaseConfig);
-
-export default firebase;
+export default firebaseConfig;
 

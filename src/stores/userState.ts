@@ -39,15 +39,14 @@ export class UserInfo {
 }
 
 export interface UserState {
-  _fbUser: firebase.User | undefined;
-  _userInfo: UserInfo | undefined;
-  _lastStage: string;
+  _fbUser: firebase.User | null;
+  _userInfo: UserInfo | null;
 }
 
 // UserState
 export class UserState {
 
-  public constructor(fbUser: firebase.User | undefined = undefined, userInfo: UserInfo | undefined = undefined) {
+  public constructor(fbUser: firebase.User | null = null, userInfo: UserInfo | null = null) {
     this._fbUser = fbUser;
     this._userInfo = userInfo;
   }
@@ -73,11 +72,11 @@ export class UserState {
     return UserPhase.LOGGED_IN;
   }
 
-  public get userInfo(): UserInfo | undefined {
+  public get userInfo(): UserInfo | null {
     return this._userInfo;
   }
 
-  public get fbUser(): firebase.User | undefined {
+  public get fbUser(): firebase.User | null {
     return this._fbUser;
   }
 

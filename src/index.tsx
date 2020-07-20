@@ -27,11 +27,9 @@ firebase.auth().onAuthStateChanged(
 );
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={rentHouseStore}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={rentHouseStore}>
+    <App />
+  </Provider>,
   document.getElementById('root')
 );
 

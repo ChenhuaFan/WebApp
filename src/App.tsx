@@ -1,9 +1,12 @@
 // react
 import React from 'react';
-import LoginContainer from './views/LoginContainer';
-import RegisterContainer from './views/RegisterContainer';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { UserPhase } from './enums/Entrance';
+import { Routers } from './enums/Routers';
+// components
+import LoginContainer from './views/LoginContainer';
+import RegisterContainer from './views/RegisterContainer';
+import Home from './views/Home';
 // redux react
 import { connect } from 'react-redux';
 // init antd
@@ -27,23 +30,23 @@ class App extends React.Component<IProps, {}> {
           <Switch>
             <Route
               exact={true}
-              path="/login"
+              path={Routers.LOGIN}
               render={
                 ({ location }) => {
                   switch (this.props.phase) {
                     case UserPhase.PHASE_I:
                       return <LoginContainer />;
                     case UserPhase.PHASE_II:
-                      return <Redirect to={{ pathname: "/register", state: { from: location } }} />
+                      return <Redirect to={{ pathname: Routers.REGISTER, state: { from: location } }} />
                     default:
-                      return <Redirect to={{ pathname: "/", state: { from: location } }} />
+                      return <Redirect to={{ pathname: Routers.HOME, state: { from: location } }} />
                   }
                 }
               }
             />
             <Route
               exact={true}
-              path="/register"
+              path={Routers.REGISTER}
               render={
                 ({ location }) => {
                   switch (this.props.phase) {
@@ -52,12 +55,12 @@ class App extends React.Component<IProps, {}> {
                     case UserPhase.PHASE_II:
                       return <RegisterContainer step={UserPhase.PHASE_II} />
                     default:
-                      return <Redirect to={{ pathname: "/", state: { from: location } }} />
+                      return <Redirect to={{ pathname: Routers.HOME, state: { from: location } }} />
                   }
                 }
               }
             />
-            <Route exact={true} path="/" render={() => <p>主页</p>} />
+            <Route exact={true} path={Routers.HOME} render={() => <Home />} />
           </Switch>
         </BrowserRouter>
       </ConfigProvider>

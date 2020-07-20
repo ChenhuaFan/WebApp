@@ -1,12 +1,23 @@
 import * as React from 'react';
-import { PageHeader, Space } from 'antd';
+import { PageHeader, Space, Row, Col, Dropdown, Button } from 'antd';
 import AvatarUI from './AvatarUI';
 import { Routers } from '../enums/Routers';
 import NavigationButton from './NavigationButton';
+import { BarsOutlined } from '@ant-design/icons';
 
 class IHeader extends React.Component<{}, {}> {
 
   public render(): JSX.Element {
+
+    const overlay: JSX.Element = (
+      <Space size="large">
+        <NavigationButton to={Routers.SUBLEASE_POST}>转租市场</NavigationButton>
+        <NavigationButton to={Routers.SHARING_POST}>找室友</NavigationButton>
+        <NavigationButton to={Routers.WIKI}>房源 WIKI</NavigationButton>
+        <AvatarUI />
+      </Space>
+    )
+
     return (
       <PageHeader
         className="site-page-header-responsive"
@@ -19,12 +30,16 @@ class IHeader extends React.Component<{}, {}> {
         title="RentHouse"
         extra={
           (
-            <Space size="large">
-              <NavigationButton to={Routers.SUBLEASE_POST}>转租市场</NavigationButton>
-              <NavigationButton to={Routers.SHARING_POST}>找室友</NavigationButton>
-              <NavigationButton to={Routers.WIKI}>房源 WIKI</NavigationButton>
-              <AvatarUI />
-            </Space>
+            <Row>
+              <Col xs={0} sm={0} md={12} lg={12} xl={12}>
+                {overlay}
+              </Col>
+              <Col xs={12} sm={12} md={0} lg={0} xl={0}>
+                <Dropdown overlay={overlay} placement="bottomRight" arrow>
+                  <Button icon={<BarsOutlined />} type='primary'>导航</Button>
+                </Dropdown>
+              </Col>
+            </Row>
           )
         }
       >

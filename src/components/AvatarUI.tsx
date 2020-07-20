@@ -28,7 +28,9 @@ class AvatarUI extends React.Component<IProps, {}> {
         return (
           <div>
             <Avatar src={this.props.photo}></Avatar>
-            <span>{this.props.displayName}</span>
+            <span style={{"paddingLeft": "12px"}}>
+              <NavigationButton to={Routers.ME} type="primary">{this.props.displayName}</NavigationButton>
+            </span>
           </div>
         )
     }

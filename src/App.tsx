@@ -16,6 +16,7 @@ import moment from 'moment';
 import 'moment/locale/zh-cn';
 import './config/styles/App.less';
 import { UserState } from './stores/userState';
+import Post from './views/Post';
 moment.locale('zh-cn');
 
 interface IProps {
@@ -60,6 +61,7 @@ class App extends React.Component<IProps, {}> {
                 }
               }
             />
+            <Route exact={true} path={Routers.POST} render={() => <Post />} />
             <Route exact={true} path={Routers.HOME} render={() => <Home />} />
           </Switch>
         </BrowserRouter>

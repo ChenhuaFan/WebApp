@@ -1,13 +1,14 @@
 import React from "react";
 import { Button } from "antd";
 
-declare const ButtonTypes: ["text", "primary"];
+declare const ButtonTypes: ["text", "primary", "dashed"];
 export declare type ButtonType = typeof ButtonTypes[number];
 
 interface IProps {
   to: string,
   children: JSX.Element | string,
-  type?: ButtonType
+  type?: ButtonType,
+  style?: React.CSSProperties;
 }
 
 class NavigationButton extends React.Component<IProps, {}> {
@@ -18,7 +19,7 @@ class NavigationButton extends React.Component<IProps, {}> {
 
   public render(): JSX.Element {
     return (
-      <Button type={this.props.type || "text"} onClick={() => this.redirect(this.props.to)}> {this.props.children} </Button>
+      <Button style={this.props.style} type={this.props.type || "text"} onClick={() => this.redirect(this.props.to)}> {this.props.children} </Button>
     )
   }
 }

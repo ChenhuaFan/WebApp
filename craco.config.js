@@ -8,8 +8,8 @@ module.exports = {
         lessLoaderOptions: {
           lessOptions: {
             modifyVars: { 
-                '@primary-color': '#EB426A',
-                '@border-radius-base': '20px'
+                '@primary-color': '#285CB7',//'#EB426A',
+                '@border-radius-base': '10px'
             },
             javascriptEnabled: true,
           },

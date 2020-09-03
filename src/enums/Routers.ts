@@ -2,10 +2,11 @@ export enum Routers {
   HOME = '',
   LOGIN = '/login',
   REGISTER = '/register',
-  SUBLEASE_POST = '/sublease/post',
-  SHARING_POST = '/sharing/post',
+  POST = '/post',
   WIKI = '/wiki',
-  ME = '/me'
+  ME = '/me',
+  SUBLEASE_LIST = '/sublease',
+  ROOMMATE_LIST = '/roommate'
 }
 
 export enum PostType {
